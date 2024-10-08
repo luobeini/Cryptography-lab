@@ -1,5 +1,4 @@
-mk=0x0123456789ABCDEFFEDCBA9876543210 
-x=0x0123456789ABCDEFFEDCBA9876543210
+
 FK=[0xa3b1bac6, 0x56aa3350, 0x677d9197, 0xb27022dc]
 S_BOX = [0xD6, 0x90, 0xE9, 0xFE, 0xCC, 0xE1, 0x3D, 0xB7, 0x16, 0xB6, 0x14, 0xC2, 0x28, 0xFB, 0x2C, 0x05,
          0x2B, 0x67, 0x9A, 0x76, 0x2A, 0xBE, 0x04, 0xC3, 0xAA, 0x44, 0x13, 0x26, 0x49, 0x86, 0x06, 0x99,
@@ -29,51 +28,58 @@ CK = [
     0x10171e25, 0x2c333a41, 0x484f565d, 0x646b7279
 ]
 
-def wd_to_bys(wd, bys):    #32bits字拆开
+#32bits字拆开
+def wd_to_bys(wd, bys):    
     bys.extend([(wd >> i) & 0xff for i in range(24, -1, -8)])
 
-
-def bys_to_wd(bys):          #合并为32bits字
+#合并为32bits字
+def bys_to_wd(bys):          
     ret = 0
     for i in range(4):
         bits = 24 - i * 8
         ret |= (bys[i] << bits)
     return ret
 
-def left(wd,bit):           #循环左移
+ #循环左移
+def left(wd,bit):          
     return (wd<<bit & 0xffffffff) |(wd>>(32-bit ))
 
-def right(wd,bit):           #循环右移
+#循环右移
+def right(wd,bit):           
     return (wd>>bit & 0xffffffff) | (wd<<(32-bit))
 
-
-def search_s(wd):               #查S表,直接以32bits的形态查
+#查S盒,输入为32bits
+def search_s(wd):               
     ret = []
     for i in range(0, 4):
-        byte = (wd >> (32 - (i + 1) * 8)) & 0xff
+        byte = (wd >> (32 - (i + 1) * 8)) & 0xff 
         row = byte >> 4
         col = byte & 0x0f
         index = (row * 16 + col)
         ret.append(S_BOX[index])
     return bys_to_wd(ret)
 
-def T(x1,x2,x3,rk):             # T变换
+ # T变换
+def T(x1,x2,x3,rk):            
     a=x1^x2^x3^rk
     b=search_s(a)
-    return left(b,2)^left(b,10)^left(b,18)^left(b,24)
+    return b^left(b,2)^left(b,10)^left(b,18)^left(b,24)
 
-def rT(k1,k2,k3,ck):            #T'变换
+#T'变换
+def rT(k1,k2,k3,ck):            
     a=k1^k2^k3^ck
     b=search_s(a)
     return b^left(b,13) ^ left(b,23)
 
-def rever(x):                  #逆向
+#逆向
+def rever(x):                  
     for i in range(4):
         x[3-i]= (x[3-i] & 0xffffffff)
     s = f"{x[3]:08x}{x[2]:08x}{x[1]:08x}{x[0]:08x}"
     
     return s
-def output(s, name):          #输出
+
+def output(s, name):          
 
     out = ""
     for i in range(0, len(s), 2):
@@ -81,16 +87,21 @@ def output(s, name):          #输出
     print(f"{name}:", end="")
     print(out.strip())
 
+def input():
+    print("请输入需要加密的字符")
+    x=input()
+    print("请输入密钥")
+
 ######密钥扩展算法######
 
-def extend_key(mk):  
+def extend(mk):  
     """
     密钥扩展算法
     """           
     MK=[(mk >> (128 - (i + 1) * 32)) & 0xffffffff for i in range(4)]   #分割为8bits一组
     K=[MK[i] ^ FK[i] for i in range (4)]
     rk=[]
-    for i in range(32):          #生成轮密钥
+    for i in range(32):         #生成轮密钥
         a=rT(K[i+1],K[i+2],K[i+3],CK[i])
         K.append(K[i]^a)
         rk.append(K[i]^a)
@@ -100,13 +111,32 @@ def extend_key(mk):
 #####加密算法#####
 def encode(x,rk):
 
-    X=[(x >> (128 -(i + 1) *32) )& 0xffffffff   for i in range(4)] 
+    X=[(x >> (128 -(i + 1) *32) )& 0xffffffff   for i in range(4)]  ##分割
     
-    for i in range(32):
+    for i in range(32):      #轮函数加密
         c=T(X[1],X[2],X[3],rk[i]) ^ X[0]
         X=X[1:]+[c]
-    Y=rever(X)
+    Y=rever(X)              #将得到的X逆向
     return  Y
+
+#####解密算法#####
+
+def decode(ciphertext, rk):   #操作几乎相同
+    ciphertext = int(ciphertext, 16)
+    X = [ciphertext >> (128 - (i + 1) * 32) & 0xffffffff for i in range(4)]
+    for i in range(32):
+        t = T(X[1], X[2], X[3], rk[31 - i])
+        c = (t ^ X[0])
+        X = X[1:] + [c]
+    m = rever(X)
+    return m
+
+rk=extend(mk)
+ciphertext=encode(x,rk)
+output(ciphertext,"cipertext")
+plaintext=decode(ciphertext,rk)
+output(plaintext,"plaintext")
+
 
 
     

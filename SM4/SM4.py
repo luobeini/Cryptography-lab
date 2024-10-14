@@ -1,4 +1,6 @@
-
+import tkinter as tk
+from tkinter import messagebox
+from Crypto.Util.Padding import pad
 FK=[0xa3b1bac6, 0x56aa3350, 0x677d9197, 0xb27022dc]
 S_BOX = [0xD6, 0x90, 0xE9, 0xFE, 0xCC, 0xE1, 0x3D, 0xB7, 0x16, 0xB6, 0x14, 0xC2, 0x28, 0xFB, 0x2C, 0x05,
          0x2B, 0x67, 0x9A, 0x76, 0x2A, 0xBE, 0x04, 0xC3, 0xAA, 0x44, 0x13, 0x26, 0x49, 0x86, 0x06, 0x99,
@@ -87,10 +89,7 @@ def output(s, name):
     print(f"{name}:", end="")
     print(out.strip())
 
-def input():
-    print("请输入需要加密的字符")
-    x=input()
-    print("请输入密钥")
+
 
 ######密钥扩展算法######
 
@@ -130,6 +129,7 @@ def decode(ciphertext, rk):   #操作几乎相同
         X = X[1:] + [c]
     m = rever(X)
     return m
+x=0x323032323032303130323132e7bd97e8b49de5a6ae0b0b0b0b0b0b0b0b0b0b0b
 
 rk=extend(mk)
 ciphertext=encode(x,rk)

@@ -129,8 +129,12 @@ def decode(ciphertext, rk):   #操作几乎相同
         X = X[1:] + [c]
     m = rever(X)
     return m
-x=0x323032323032303130323132e7bd97e8b49de5a6ae0b0b0b0b0b0b0b0b0b0b0b
 
+
+
+
+x=0x2022020102126c756f6265696e692004
+mk=0x2022030302127a6f756a696168616f02
 rk=extend(mk)
 ciphertext=encode(x,rk)
 output(ciphertext,"cipertext")

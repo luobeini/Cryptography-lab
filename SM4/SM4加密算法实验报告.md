@@ -10,13 +10,13 @@ SM4算法使用128位的密钥和分组大小，使用32轮迭代加密，可以
 
 #### 加密算法
 
-![image-20241021103431382](C:\Users\86199\AppData\Roaming\Typora\typora-user-images\image-20241021103431382.png)
+![image-20241021103431382](image\image-20241021103431382.png)
 
-![image-20241021102301494](C:\Users\86199\AppData\Roaming\Typora\typora-user-images\image-20241021102301494.png)
+![image-20241021102301494](image\image-20241021102301494.png)
 
 #### 密钥扩展算法
 
-![image-20241021102332902](C:\Users\86199\AppData\Roaming\Typora\typora-user-images\image-20241021102332902.png)
+![image-20241021102332902](image\image-20241021102332902.png)
 
 ### 重要代码解释
 

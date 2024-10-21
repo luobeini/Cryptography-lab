@@ -8,15 +8,23 @@ SM4算法使用128位的密钥和分组大小，使用32轮迭代加密，可以
 
 ### 算法图解
 
+![image-20241021102301494](image\image-20241021102301494.png)
+
+![image-20241021103431382](image\image-20241021103431382.png)
+
 #### 加密算法
 
-![image-20241021103431382](C:\Users\86199\AppData\Roaming\Typora\typora-user-images\image-20241021103431382.png)
 
-![image-20241021102301494](C:\Users\86199\AppData\Roaming\Typora\typora-user-images\image-20241021102301494.png)
+
+![image-20241021103431382](C:\Users\86199\Desktop\保密技术基础\Cryptography-lab-\image\image-20241021103431382.png)
+
+
+
+
 
 #### 密钥扩展算法
 
-![image-20241021102332902](C:\Users\86199\AppData\Roaming\Typora\typora-user-images\image-20241021102332902.png)
+
 
 ### 重要代码解释
 
@@ -187,20 +195,28 @@ def decode(ciphertext, rk):   #操作几乎相同
 
 ### 简单测试
 
-首先试运行国标文件上的示例![image-20241021103844719](C:\Users\86199\AppData\Roaming\Typora\typora-user-images\image-20241021103844719.png)
+首先试运行国标文件上的示例![image-20241021103844719](image\image-20241021103844719.png)
 
-![image-20241021103857254](C:\Users\86199\AppData\Roaming\Typora\typora-user-images\image-20241021103857254.png)
+![image-20241021103857254](image\image-20241021103857254.png)
 
 运行的代码以及运行结果
 
-![image-20241021104238579](C:\Users\86199\AppData\Roaming\Typora\typora-user-images\image-20241021104238579.png)
+![image-20241021104238579](image\image-20241021104238579.png)
 
-![image-20241021104200770](C:\Users\86199\AppData\Roaming\Typora\typora-user-images\image-20241021104200770.png)
+![image-20241021104200770](image\image-20241021104200770.png)
 
 然后加密我自定义的内容
 
-![image-20241021105415364](C:\Users\86199\AppData\Roaming\Typora\typora-user-images\image-20241021105415364.png)
+```python
+x=0x2022020102126c756f6265696e692004 #学号+姓名+出生年份
+
+mk=0x2022030302127a6f756a696168616f02
+```
 
 结果:
 
-![image-20241021105500692](C:\Users\86199\AppData\Roaming\Typora\typora-user-images\image-20241021105500692.png)
+```
+cipertext:08 97 fd ca 28 83 cb 99 15 04 61 40 07 2e 9b 9f
+plaintext:20 22 02 01 02 12 6c 75 6f 62 65 69 6e 69 20 04
+```
+

@@ -69,8 +69,6 @@ A7.计算C3 = Hash(x2 || M || y2)
 
 A8.输出密文C = C1 || C2 || C3
 
-!<img src="image\image-20241104112025016.png" alt="image-20241104112025016">
-
 ##### 2.SM2解密算法流程
 
 klen为密文中C2的比特长度,对密文C=C1||C2||C3进行解密,需要实现以下步骤
@@ -101,7 +99,7 @@ klen为密文中C2的比特长度,对密文C=C1||C2||C3进行解密,需要实现
 
 ![image-20241104113102844](C:\Users\86199\AppData\Roaming\Typora\typora-user-images\image-20241104113102844.png)
 
-#### 三.算法代码实现
+#### 三. 算法代码实现
 
 ```python
 import random
@@ -181,7 +179,6 @@ class Point:
 
 # 验证某个点是否在椭圆曲线上,椭圆的参数是全局变量
 def on_curve(P):
- 
     x, y = P
     if pow(y, 2, p) == ((pow(x, 3, p) + a*x + b) % p):
         return True
@@ -199,14 +196,14 @@ def point_add(P, Q):
 
     if P.x == Q.x:
         #  P == Q:使用点倍加公式
-        lam = (3 * P.x * P.x + a) * pow(2 * P.y, p - 2, p)
+        k = (3 * P.x * P.x + a) * pow(2 * P.y, p - 2, p)
     else:
         # 一般情况使用普通点加公式
-        lam = (Q.y - P.y) * pow(Q.x - P.x, p - 2, p)
+        k = (Q.y - P.y) * pow(Q.x - P.x, p - 2, p)
 
-    lam %= p
-    x_r = (lam * lam - P.x - Q.x) % p
-    y_r = (lam * (P.x - x_r) - P.y) % p
+    k %= p
+    x_r = (k * k - P.x - Q.x) % p
+    y_r = (k * (P.x - x_r) - P.y) % p
     return Point(x_r, y_r)
 
 # 椭圆曲线点倍加
@@ -412,3 +409,40 @@ luobeini202202010212
 
 ![image-20241104151415978](C:\Users\86199\AppData\Roaming\Typora\typora-user-images\image-20241104151415978.png)
 
+#### 五. 遇到的问题及改进
+
+1. 实现KDF时想要把步骤变得更简单,结果出现错误,通过比对位数发现了,还是采用了原有的步骤
+
+2. 算点的倍数时一开始只会用加k次的方法，参考了网上的代码发现使用二进制加法复杂度更低，性能更好,进行了改进
+
+   原方法:
+
+   ```python
+   def point_mult(k, P):
+       R=None
+       for i in range(k):
+          R=point_add(R , P)
+       return R
+   ```
+
+   改进：
+
+   
+
+```python
+def point_mult(k, P):
+    R = None
+    T = P
+    while k > 0: #通过k移位进行点倍加而不是遍历加
+        if k & 1: 
+            R = point_add(R, T)
+        T = point_add(T, T)
+        k >>= 1
+    return R
+```
+
+3.解密时由于C2的长度会变化进行提取时出现了问题，提取出现了错误，最终根据C1和C3的长度进行提取
+
+```py
+C2_bits = C[512:-256]  # 提取 C2 的比特串(C1和C3的长度确定因此得到C2)
+```

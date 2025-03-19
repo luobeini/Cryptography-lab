@@ -75,7 +75,6 @@ class Point:
 
 # 验证某个点是否在椭圆曲线上,椭圆的参数是全局变量
 def on_curve(P):
- 
     x, y = P
     if pow(y, 2, p) == ((pow(x, 3, p) + a*x + b) % p):
         return True
@@ -97,7 +96,6 @@ def point_add(P, Q):
     else:
         # 一般情况使用普通点加公式
         lam = (Q.y - P.y) * pow(Q.x - P.x, p - 2, p)
-
     lam %= p
     x_r = (lam * lam - P.x - Q.x) % p
     y_r = (lam * (P.x - x_r) - P.y) % p
